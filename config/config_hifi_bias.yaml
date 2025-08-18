@@ -1,0 +1,19 @@
+benchmarks_dir: benchmarks_bias
+logs_dir: logs_bias
+output_dir: results_bias
+samples:
+- alpha: /project/logsdon_shared/projects/HGSVC3/Snakemake-Flagger/config/alpha/alpha_optimum_trunc_exp_gaussian_w_16000_n_50.HiFi_DC_1.2_DEC_2024.v1.1.0.tsv
+  asm_fa: /project/logsdon_shared/projects/HGSVC3/new_65_asms_renamed/HG00096-asm-renamed-reort.fa
+  bam: /project/logsdon_shared/projects/HGSVC3/alignment/hifi_alignment/HG00096.bam
+  name: HG00096
+  bias_annot_dir: /project/logsdon_shared/projects/HGSVC3/Snakemake-Flagger/KO_working/RM/HG00096
+- alpha: /project/logsdon_shared/projects/HGSVC3/Snakemake-Flagger/config/alpha/alpha_optimum_trunc_exp_gaussian_w_16000_n_50.HiFi_DC_1.2_DEC_2024.v1.1.0.tsv
+  asm_fa: /project/logsdon_shared/projects/HGSVC3/new_65_asms_renamed/HG00171-asm-renamed-reort.fa
+  bam: /project/logsdon_shared/projects/HGSVC3/alignment/hifi_alignment/HG00171.bam
+  name: HG00171
+  bias_annot_dir: /project/logsdon_shared/projects/HGSVC3/Snakemake-Flagger/KO_working/RM/HG00171
+- alpha: /project/logsdon_shared/projects/HGSVC3/Snakemake-Flagger/config/alpha/alpha_optimum_trunc_exp_gaussian_w_16000_n_50.HiFi_DC_1.2_DEC_2024.v1.1.0.tsv
+  asm_fa: /project/logsdon_shared/projects/HGSVC3/new_65_asms_renamed/HG02059-asm-renamed-reort.fa
+  bam: /project/logsdon_shared/projects/HGSVC3/alignment/hifi_alignment/HG02059.bam
+  name: HG02059
+  bias_annot_dir: /project/logsdon_shared/projects/HGSVC3/Snakemake-Flagger/KO_working/RM/HG02059

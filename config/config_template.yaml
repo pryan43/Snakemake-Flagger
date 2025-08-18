@@ -1,0 +1,8 @@
+output_dir: "results"
+logs_dir: "logs"
+benchmarks_dir: "benchmarks"
+# Assemblies
+# /project/logsdon_shared/projects/HGSVC3/new_65_asms_renamed/
+# BAMs
+# /project/logsdon_shared/projects/HGSVC3/alignment/renamed_alignment
+samples: []
