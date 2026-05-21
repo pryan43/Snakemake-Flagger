@@ -1,5 +1,5 @@
 import json
-from os.path import join
+from os.path import join, dirname
 
 """
 {
@@ -80,7 +80,7 @@ rule bam_to_cov:
     benchmark:
         join(BENCHMARK_DIR, "bam_to_cov_{sm}.txt")
     singularity:
-        "docker://mobinasri/flagger:v1.1.0"
+        "docker://mobinasri/flagger:v1.2.0"
     resources:
         mem=MEM,
     threads: THREADS
@@ -100,29 +100,71 @@ rule run_flagger:
         alpha=lambda wc: SAMPLES[wc.sm]["alpha"],
         cov=rules.bam_to_cov.output.cov,
     output:
-        output_dir=directory(os.path.join(OUTPUT_DIR, "{sm}")),
+        bed=join(OUTPUT_DIR, "{sm}", "final_flagger_prediction.bed"),
     log:
         join(LOG_DIR, "run_flagger_{sm}.log"),
     benchmark:
         join(BENCHMARK_DIR, "run_flagger_{sm}.txt")
     resources:
         mem=MEM,
+    params:
+        output_dir=lambda wc,output: dirname(output.bed)
     singularity:
-        "docker://mobinasri/flagger:v1.1.0"
+        "docker://mobinasri/flagger:v1.2.0"
     threads: THREADS
     shell:
         """
-        mkdir -p {output.output_dir}
+        mkdir -p {params.output_dir}
         hmm_flagger \
             --input {input.cov} \
-            --outputDir {output.output_dir}  \
+            --outputDir {params.output_dir}  \
             --alphaTsv {input.alpha} \
             --labelNames Err,Dup,Hap,Col \
             --threads {threads} &> {log}
         """
 
+rule self_alignment:
+    input:
+        fa=lambda wc: SAMPLES[wc.sm]["asm_fa"]
+    output:
+        bam=join(OUTPUT_DIR, "{sm}.bam"),
+        bai=join(OUTPUT_DIR, "{sm}.bai")
+    threads: 8
+    params:
+        minimap2_options="-k 19 -a -x asm5 -D -I8g"
+    shell:
+        """
+        minimap2 {params.minimap2_options} -t{threads} {input.fa} {input.fa} | samtools view -h -b | samtools sort > {output.bam}
+        samtools index {output.bam}
+        """
+
+rule filter_predictions:
+    input:
+        bam=rules.self_alignment.output.bam,
+        bed=rules.run_flagger.output.bed
+    output:
+        bed=join(OUTPUT_DIR, "{sm}", "final_flagger_prediction.conservative.bed")
+    log:
+        join(LOG_DIR, "filter_predictions_{sm}.log"),
+    benchmark:
+        join(BENCHMARK_DIR, "filter_predictions_{sm}.txt")
+    resources:
+        mem=MEM,
+    singularity:
+        "docker://mobinasri/flagger:v1.2.0"
+    threads: 8
+    shell:
+        """
+        python3 /home/programs/src/filter_hmm_flagger_calls.py \
+            --inputBam {input.bam} \
+            --inputBed {input.bed} \
+            --outputBed {output.bed} \
+            --threads {threads} &> {log}
+        """
 
 rule flagger:
     input:
         expand(rules.run_flagger.output, sm=SAMPLES.keys()),
+        expand(rules.self_alignment.output, sm=SAMPLES.keys()),
+        expand(rules.filter_predictions.output, sm=SAMPLES.keys())
     default_target: True
