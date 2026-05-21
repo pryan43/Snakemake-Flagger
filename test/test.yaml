@@ -7,3 +7,11 @@ samples:
   bam: test/test.bam
   name: Test
   bias_annot_dir: test/annotations
+  conservative_bed: True
+
+- alpha: config/alpha/alpha_optimum_trunc_exp_gaussian_w_16000_n_50.HiFi_DC_1.2_DEC_2024.v1.1.0.tsv
+  asm_fa: test/test.fa
+  bam: test/test.bam
+  name: Test2
+  bias_annot_dir: test/annotations
+  conservative_bed: False

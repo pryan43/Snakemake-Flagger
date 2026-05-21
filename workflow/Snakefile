@@ -15,11 +15,22 @@ from os.path import join, dirname
             Literal["bam"]: str,
             Literal["alpha"]: str,
             Literal["bias_annot_dir"]: str,
+            Literal["conservative_bed"]: bool
         }
     ]
 }
 """
-SAMPLES = {sm["name"]: sm for sm in config["samples"]}
+CONSERVATIVE_SAMPLES= []
+SAMPLES = {}
+for sample_config in config["samples"]:
+    name= sample_config.get("name")
+    SAMPLES[name] = sample_config
+
+    conservative_bed = sample_config.get("conservative_bed", False)
+
+    if conservative_bed:
+        CONSERVATIVE_SAMPLES.append(name)
+    
 OUTPUT_DIR = config["output_dir"]
 BENCHMARK_DIR = config["benchmarks_dir"]
 LOG_DIR = config["logs_dir"]
@@ -165,6 +176,6 @@ rule filter_predictions:
 rule flagger:
     input:
         expand(rules.run_flagger.output, sm=SAMPLES.keys()),
-        expand(rules.self_alignment.output, sm=SAMPLES.keys()),
-        expand(rules.filter_predictions.output, sm=SAMPLES.keys())
+        expand(rules.self_alignment.output, sm=CONSERVATIVE_SAMPLES),
+        expand(rules.filter_predictions.output, sm=CONSERVATIVE_SAMPLES)
     default_target: True
