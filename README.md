@@ -1,5 +1,5 @@
 # Snakemake-Flagger
-Workflow to run base Flagger v1.1.0 w/o alignment.
+Workflow to run base Flagger v1.2.0 w/o alignment.
 * https://github.com/mobinasri/flagger/tree/main
 
 
