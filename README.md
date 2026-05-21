@@ -31,6 +31,8 @@ samples:
   name: Test
   #Annotation directory
   bias_annot_dir: test/annotations
+  #Generate conservative.bed (optional)
+  conservative_bed: True
 ```
 ## Test
 
